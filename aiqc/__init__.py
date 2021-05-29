@@ -16,6 +16,7 @@ import pyarrow
 import pandas as pd
 import numpy as np
 from PIL import Image as Imaje
+import h5py
 # Preprocessing & metrics.
 import sklearn
 from sklearn.model_selection import train_test_split, StratifiedKFold #mandatory separate import.
@@ -5050,9 +5051,8 @@ class Predictor(BaseModel):
 			# Workaround: write bytes to file so keras can read from path instead of buffer.
 			with open(temp_file_name, 'wb') as f:
 				f.write(model_blob)
-			import h5py
-			g = h5py.File(temp_file_name, 'r')
-			model = keras.models.load_model(g, compile=True)
+			keras_model = h5py.File(temp_file_name, 'r')
+			model = keras.models.load_model(keras_model, compile=True)
 			os.remove(temp_file_name)
 			# Unlike pytorch, it's doesn't look like you need to initialize the optimizer or anything.
 			return model
